@@ -28,19 +28,35 @@ var searchTerm = process.argv.splice(3, process.argv.length - 1);
 // // If spotify-this-song command is used, executes the following which will display artist, song name, preview link, and album
 
 if (a === "spotify-this-song") {
-spotify
-.search({ type: 'track', query: searchTerm })
-.then(function(response) {
-    console.log("--------------------------------------------------------")
-    console.log("Artist: " + response.tracks.items[0].album.artists[0].name);
-    console.log("Track Title: " + response.tracks.items[0].name);
-    console.log("Preview URL: " + response.tracks.items[0].preview_url);
-    console.log("Album: " + response.tracks.items[0].album.name);
-    console.log("--------------------------------------------------------")
-})
-.catch(function(err) {
-    console.log(err);
-});
+    if (searchTerm === undefined || searchTerm.length == 0){
+        spotify
+        .request('https://api.spotify.com/v1/tracks/3DYVWvPh3kGwPasp7yjahc')
+        .then(function(data) {
+            console.log("--------------------------------------------------------")
+            console.log("Artist: " + data.artists[0].name); 
+            console.log("Track Title: " + data.name)
+            console.log("Preview URL: " + data.preview_url)
+            console.log("Album: " + data.album.name)
+            console.log("--------------------------------------------------------")
+        })
+        .catch(function(err) {
+            console.error('Error occurred: ' + err); 
+        });
+    }
+    else(
+    spotify
+    .search({ type: 'track', query: searchTerm })
+    .then(function(response) {
+        console.log("--------------------------------------------------------")
+        console.log("Artist: " + response.tracks.items[0].album.artists[0].name);
+        console.log("Track Title: " + response.tracks.items[0].name);
+        console.log("Preview URL: " + response.tracks.items[0].preview_url);
+        console.log("Album: " + response.tracks.items[0].album.name);
+        console.log("--------------------------------------------------------")
+    })
+    .catch(function(err) {
+        console.log(err);
+    }));
 };
 
 // Bands in Town Code
@@ -65,11 +81,26 @@ if (a === "concert-this"){
 
 // OMDB Code
 var movie = searchTerm
-
 var movieQueryURL = "https://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy";
+var mrNobodyURL = "https://www.omdbapi.com/?t=mr,nobody&y=&plot=short&apikey=trilogy"
 
 if (a === "movie-this"){
-    axios.get(movieQueryURL).then(
+    if (searchTerm === undefined || searchTerm.length == 0) {
+        axios.get(mrNobodyURL).then(
+            function(response){
+            console.log("--------------------------------------------------------")
+            console.log("Title: " + response.data.Title)
+            console.log("Year Released: " + response.data.Year)
+            console.log("IMDB Rating: " + response.data.imdbRating)
+            console.log("Country Produced: " + response.data.Country)
+            console.log("Language: " + response.data.Language)
+            console.log("Plot: " + response.data.Plot)
+            console.log("Actors: " + response.data.Actors)
+            console.log("--------------------------------------------------------")
+            }
+        )
+    }
+    else (axios.get(movieQueryURL).then(
         function(response){
             console.log("--------------------------------------------------------")
             console.log("Title: " + response.data.Title)
@@ -81,7 +112,7 @@ if (a === "movie-this"){
             console.log("Actors: " + response.data.Actors)
             console.log("--------------------------------------------------------")
         }
-    )
+    ))
 };
 
 
